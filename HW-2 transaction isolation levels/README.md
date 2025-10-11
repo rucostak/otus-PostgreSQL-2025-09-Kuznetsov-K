@@ -35,23 +35,23 @@
 **Результат**: Запрос `\set` вернул `AUTOCOMMIT = 'off'`.
 
 4. Создание таблицы *persons* в сессии 1
-	
+	```
 	create table persons(id serial, first_name text, second_name text);
 	insert into persons(first_name, second_name) values('ivan', 'ivanov');
 	insert into persons(first_name, second_name) values('petr', 'petrov');
 	commit;
-
+	```
 
 5. Проверка уровня транзакции в сессии 1
 	
-	show transaction isolation level;
+	`show transaction isolation level;`
 
 
 **Результат**: `read committed`.
 
 6. Начало транзакции в обоих сессиях
 	
-	begin transaction;
+	`begin transaction;`
 
 *Примечание. В сессии 1 появилось предупреждение о запущенной транзакции (остатки от предыдущей команды `show transaction isolation level;`)*
 	
@@ -61,12 +61,12 @@
 
 7. Вставка записи в таблицу в сессии 1
 	
-	insert into persons(first_name, second_name) values('sergey', 'sergeev');
+	`insert into persons(first_name, second_name) values('sergey', 'sergeev');`
 
 
 8. Проверка наличия новой записи в сессии 2
 	
-	select * from persons;
+	`select * from persons;`
 
 
 **Результат**: новая запись не видна, поскольку уровень изоляции не позволяет обращаться к неподтверждённым изменениям в БД.
@@ -80,12 +80,12 @@
 
 9. Завершение транзакции в сессии 1
 	
-	commit;
+	`commit;`
 
 
 10. Проверка наличия новой записи в сессии 2
 	
-	select * from persons;
+	`select * from persons;`
 
 
 **Результат**: видна новая запись, поскольку транзакция вставки в сессии 1 была подтверждена.
@@ -100,23 +100,23 @@
 
 11. Завершение транзакции в сессии 2
 	
-	commit;
+	`commit;`
 
 
 12. Настройка уровня транзакции в обоих сессиях
-	
+	```
 	begin transaction;
 	set transaction isolation level repeatable read;
-
+	```
 
 13. Вставка записи в таблицу в сессии 1
 	
-	insert into persons(first_name, second_name) values('sveta', 'svetova');
+	`insert into persons(first_name, second_name) values('sveta', 'svetova');`
 
 
 14. Проверка наличия новой записи в сессии 2
 	
-	select * from persons;
+	`select * from persons;`
 
 
 **Результат**: новая запись не видна, поскольку уровень изоляции не позволяет обращаться к неподтверждённым изменениям в БД.
@@ -131,12 +131,12 @@
 
 15. Завершение транзакции в сессии 1
 	
-	commit;
+	`commit;`
 
 
 16. Проверка наличия новой записи в сессии 2
 	
-	select * from persons;
+	`select * from persons;`
 
 
 **Результат**: новая запись не видна, поскольку уровень изоляции REPEATABLE READ не позволяет обращаться к любым изменениям в БД, случившимся во время выполнения такой транзакции.
@@ -151,12 +151,12 @@
 
 17. Завершение транзакции в сессии 2
 	
-	commit;
+	`commit;`
 
 
 16. Проверка наличия новой записи в сессии 2
 	
-	select * from persons;
+	`select * from persons;`
 
 
 **Результат**: видна новая запись, поскольку транзакции в обоих сессиях завершены.
