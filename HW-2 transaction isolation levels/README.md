@@ -147,7 +147,7 @@
 	  2 | petr       | petrov
 	  3 | sergey     | sergeev
 	(3 rows)
-
+	
 
 17. Завершение транзакции в сессии 2
 	
