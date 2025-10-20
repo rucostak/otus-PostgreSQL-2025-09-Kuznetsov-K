@@ -5,39 +5,39 @@
 
 Запуск мастера создания машины (cmd + N)
 
-!['Новая ВМ'](1_1_1_Create_new_VM_Ubuntu.PNG)
+!['Новая ВМ'](1_1_1_Create_new_VM_Ubuntu.png)
 
 Выбор скачанного заранее установочного образа Ubuntu
 
-!['Выбор образа ISO'](1_1_2_choose_distributive.PNG)
+!['Выбор образа ISO'](1_1_2_choose_distributive.png)
 
 Выбор BIOS
 
-!['Выбор BIOS'](1_1_3_choose_firmware_type.PNG)
+!['Выбор BIOS'](1_1_3_choose_firmware_type.png)
 
 Дополнительная настройка (кнопка "Customize Settings")
 
-!['Выбор доп.настроек'](1_1_4_customize_settings.PNG)
+!['Выбор доп.настроек'](1_1_4_customize_settings.png)
 
 Выбор места сохранения файлов ВМ
 
-!['Выбор места хранения'](1_1_5_choose_storage_for_VM.PNG)
+!['Выбор места хранения'](1_1_5_choose_storage_for_VM.png)
 
 Настройка ЦП, памяти и возможностей запуска ВМ внутри (ЦП = 2; Память = 4 ГБ)
 
-!['Настройка ЦП и памяти'](1_1_6_CPU_Memory_config.PNG)
+!['Настройка ЦП и памяти'](1_1_6_CPU_Memory_config.png)
 
 Настройка диска ВМ (размер = 15 ГБ, тип = NVMe)
 
-!['Настройка диска'](1_1_7_set_virtual_disk_type_and_size.PNG)
+!['Настройка диска'](1_1_7_set_virtual_disk_type_and_size.png)
 
 Обзор конфигурации
 
-!['Обзор конфигурации'](1_2_1_disk_config.PNG)
+!['Обзор конфигурации'](1_2_1_disk_config.png)
 
 Запуск ВМ и установка Ubuntu
 
-!['Запуск и установка'](1_3_Start_VM_and_install_Ubuntu.PNG)
+!['Запуск и установка'](1_3_Start_VM_and_install_Ubuntu.png)
 
 Установка VM Tools
 
@@ -68,7 +68,7 @@ _Требуется перезапуск ВМ._
 	sudo systemctl status postgresql
 	psql --version
 
-!['Настройка запуска и проверка версии'](4_2_enable_postgreSQL.PNG)
+!['Настройка запуска и проверка версии'](4_2_enable_postgreSQL.png)
 
 Проверка кластера
 
@@ -86,7 +86,7 @@ _Требуется перезапуск ВМ._
 	create table test(c1 text);
 	insert into test values('1'),('2');
 
-!['Создание таблицы test'](4_3_create_table_test.PNG)
+!['Создание таблицы test'](4_3_create_table_test.png)
 
 
 ## Добавление дополнительного диска в Ubuntu 24.04 в VMWare Fusion 11.5 (macOS)
@@ -95,22 +95,22 @@ _Требуется перезапуск ВМ._
 ### Создание дополнительного диска
 
 1. Настройки ___остановленной___ ВМ
-!['Настройки ВМ'](1_2_1_disk_config.PNG)
+!['Настройки ВМ'](1_2_1_disk_config.png)
 
 2. Выбор типа добавляемого устройства (New hard disk)
-!['Тип устройства'](5_1_0_select_device_to_add.PNG)
+!['Тип устройства'](5_1_0_select_device_to_add.png)
 
 3. Настройка диска ВМ (размер = 10 ГБ, тип = NVMe, Split into multiple files = [ ]). _Внимание! Обязательно отключить опцию "Split into multiple files" для получения единого файла диска._
-!['Настройка диска'](5_1_1_add_new_virtual_disk_to_VM.PNG)
+!['Настройка диска'](5_1_1_add_new_virtual_disk_to_VM.png)
 
 4. Выбор папки, отличной от бандла ВМ, для сохранения файла диска
-!['Выбор папки для файла диска'](5_1_2_choose_folder_out_of_VM.PNG)
+!['Выбор папки для файла диска'](5_1_2_choose_folder_out_of_VM.png)
 
 5. Сохранение файла диска
-!['Сохранение файла диска'](5_1_3_save_folder_out_of_VM.PNG)
+!['Сохранение файла диска'](5_1_3_save_folder_out_of_VM.png)
 
 6. Проверка наличия файла диска
-!['Наличие файла'](5_1_4_check_new_disk.PNG)
+!['Наличие файла'](5_1_4_check_new_disk.png)
 
 
 ### Разметка нового диска
@@ -125,7 +125,7 @@ _Требуется перезапуск ВМ._
 
 	sudo mkfs -t ext4 /dev/nvme0n2
 
-!['Форматирование'](6_2_format_disk.PNG)
+!['Форматирование'](6_2_format_disk.png)
 
 Создание точки монтирования и предоставление прав
 
@@ -146,7 +146,7 @@ _Требуется перезапуск ВМ._
 
 Регистрация автоматического монтирования диска в файле /etc/fstab
 
-!['Регистрация автоматического монтирования диска в файле /etc/fstab'](6_3_fstab.PNG)
+!['Регистрация автоматического монтирования диска в файле /etc/fstab'](6_3_fstab.png)
 
 Перезагрузка ВМ
 
@@ -172,7 +172,7 @@ _Настройки кластера указывают на папку, из к
 
 	sudo nano /etc/postgresql/15/main/postgresql.conf
 
-!['Настройка положения папки с данными в файле /etc/postgresql/15/main/postgresql.conf'](7_1_postgresql_conf.PNG)
+!['Настройка положения папки с данными в файле /etc/postgresql/15/main/postgresql.conf'](7_1_postgresql_conf.png)
 
 Запуск кластера PostgreSQL
 
@@ -205,39 +205,39 @@ _Не обнаружено роблем с автоматическим запу
 
 Запуск мастера создания машины (cmd + N)
 
-!['Новая ВМ'](1_1_1_Create_new_VM_Ubuntu.PNG)
+!['Новая ВМ'](1_1_1_Create_new_VM_Ubuntu.png)
 
 Выбор скачанного заранее установочного образа Ubuntu
 
-!['Выбор образа ISO'](1_1_2_choose_distributive.PNG)
+!['Выбор образа ISO'](1_1_2_choose_distributive.png)
 
 Выбор BIOS
 
-!['Выбор BIOS'](1_1_3_choose_firmware_type.PNG)
+!['Выбор BIOS'](1_1_3_choose_firmware_type.png)
 
 Дополнительная настройка (кнопка "Customize Settings")
 
-!['Выбор доп.настроек'](1_1_4_customize_settings.PNG)
+!['Выбор доп.настроек'](1_1_4_customize_settings.png)
 
 Выбор места сохранения файлов ВМ
 
-!['Выбор места хранения'](1_1_5_choose_storage_for_VM_target.PNG)
+!['Выбор места хранения'](1_1_5_choose_storage_for_VM_target.png)
 
 Настройка ЦП, памяти и возможностей запуска ВМ внутри (ЦП = 2; Память = 4 ГБ)
 
-!['Настройка ЦП и памяти'](1_1_6_CPU_Memory_config.PNG)
+!['Настройка ЦП и памяти'](1_1_6_CPU_Memory_config.png)
 
 Настройка диска ВМ (размер = 15 ГБ, тип = NVMe)
 
-!['Настройка диска'](1_1_7_set_virtual_disk_type_and_size.PNG)
+!['Настройка диска'](1_1_7_set_virtual_disk_type_and_size.png)
 
 Обзор конфигурации
 
-!['Обзор конфигурации'](1_2_1_disk_config.PNG)
+!['Обзор конфигурации'](1_2_1_disk_config.png)
 
 Запуск ВМ и установка Ubuntu
 
-!['Запуск и установка'](1_3_Start_VM_and_install_Ubuntu.PNG)
+!['Запуск и установка'](1_3_Start_VM_and_install_Ubuntu.png)
 
 Установка VM Tools
 
@@ -272,21 +272,21 @@ _Требуется перезапуск ВМ._
 ### Подключение дополнительного диска в Ubuntu 24.04 в VMWare Fusion 11.5 (macOS) (_из остановленной ВМ_)
 
 1. Настройки остановленной ВМ
-!['Настройки ВМ'](8_1_config_target.PNG)
+!['Настройки ВМ'](8_1_config_target.png)
 
 2. Выбор типа добавляемого устройства (Existing hard disk)
-!['Тип устройства'](8_2_attach_disk.PNG)
+!['Тип устройства'](8_2_attach_disk.png)
 
 3. Выбор файла диска остановленной ВМ (_режим совместного использования_)
-!['ВВыбор файла диска остановленной ВМ'](8_3_set_disk_sharing_mode.PNG)
+!['ВВыбор файла диска остановленной ВМ'](8_3_set_disk_sharing_mode.png)
 
 4. Регистрация диска ВМ (размер = 10 ГБ, тип = NVMe, Split into multiple files = [ ]). _Внимание! Соглашаемся с типом = SCSI, затем возвращаем NVMe._
-!['Регистрация диска'](8_4_apply_disk.PNG)
-!['Настройка типа NVMe'](8_4_set_nvme_mode.PNG)
+!['Регистрация диска'](8_4_apply_disk.png)
+!['Настройка типа NVMe'](8_4_set_nvme_mode.png)
 
 
 5. Обзор конфигурации
-!['Обзор конфигурации'](8_5_check_config.PNG)
+!['Обзор конфигурации'](8_5_check_config.png)
 
 
 ### Монтирование дополнительного диска
@@ -305,7 +305,7 @@ _Требуется перезапуск ВМ._
 
 Регистрация автоматического монтирования диска в файле /etc/fstab (_UUID остался прежним_)
 
-!['Регистрация автоматического монтирования диска в файле /etc/fstab'](9_1_fstab.PNG)
+!['Регистрация автоматического монтирования диска в файле /etc/fstab'](9_1_fstab.png)
 
 Перезагрузка ВМ
 
@@ -324,7 +324,7 @@ _Требуется перезапуск ВМ._
 
 	sudo nano /etc/postgresql/15/main/postgresql.conf
 
-!['Настройка положения папки с данными в файле /etc/postgresql/15/main/postgresql.conf'](9_2_postgresql_conf.PNG)
+!['Настройка положения папки с данными в файле /etc/postgresql/15/main/postgresql.conf'](9_2_postgresql_conf.png)
 
 Запуск кластера PostgreSQL
 
