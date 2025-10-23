@@ -273,7 +273,7 @@ Identity added: /Users/cxxxxk/ya_key (cxxxxk@CxxxxxiMac.local)
     \q
 
 
-Поскольку в Linux'е отсутствует пользователь testread, поэтому придётся запустить psql с принудительным запросом пароля (-W)
+Поскольку в Linux'е отсутствует пользователь testread, поэтому придётся запустить psql подключением через сетевой протокол с принудительным запросом пароля (-W)
 
     yc-user@otus-db-pg-vm-1:~$ psql -h 127.0.0.1 -U testread -d testdb -W
     Password: 
@@ -288,14 +288,29 @@ Identity added: /Users/cxxxxk/ya_key (cxxxxk@CxxxxxiMac.local)
     ERROR:  permission denied for table t1
 ```
 
-16. Получить данные из таблицы t1 и не могло получиться, поскольку таблица создана в схеме public. Однако вновь создаваемые объекты в этой схемы доступны автоматически только своим владельцам (и пользователям из ролей с привилегиями или суперпользователям), права на создание объектов по умолчанию ограничены.
+16. Получить данные из таблицы t1 и не могло получиться, поскольку таблица создана в схеме public (схема с именем пользователя postgres в базе testdb отсутствует, а следующая в шаблоне search_path указана схема public). Однако вновь создаваемые объекты в этой схемы доступны автоматически только своим владельцам, права на создание объектов по умолчанию ограничены.
 ```
-\dt
-        List of relations
- Schema | Name | Type  |  Owner   
---------+------+-------+----------
- public | t1   | table | postgres
-(1 row)
+    \dt
+            List of relations
+     Schema | Name | Type  |  Owner   
+    --------+------+-------+----------
+     public | t1   | table | postgres
+    (1 row)
+
+    testdb=# SELECT nspname FROM pg_catalog.pg_namespace;
+          nspname       
+    --------------------
+     pg_toast
+     pg_catalog
+     public
+     information_schema
+    (4 rows)
+
+    testdb=# SHOW search_path;
+       search_path   
+    -----------------
+     "$user", public
+    (1 row)
 ```
 
 Правильным решением видится создание таблицы непосредственно в схеме testnm, на таблицы которой выданы права роли readonly на чтение всех таблиц схемы testnm.
