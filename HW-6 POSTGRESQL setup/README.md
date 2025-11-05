@@ -973,3 +973,199 @@ tps = 1537.677419 (without initial connection time)
 # Вывод
 
 Для быстродействия выбранной конфигурации кластера наибольшее значение имеют параметры fsync (принудительный сброса данных кэша ОС на диск) и shared_buffers (объём памяти для разделяемого буфера данных).
+
+
+# Тестирование производительности при помощи утилиты [SYSBENCH](https://github.com/Percona-Lab/sysbench-tpcc)
+
+## Установка
+
+Устанавливаем sysbench в терминале:  
+```
+curl -s https://packagecloud.io/install/repositories/akopytov/sysbench/script.deb.sh | sudo bash
+sudo apt -y install sysbench
+```
+
+Добавляем поддержку PostgreSQL:  
+```
+sudo apt -y install make automake libtool pkg-config libaio-dev
+sudo apt -y install libpq-dev
+```
+
+Сброс параметров к значениям по умолчанию, исключая настроек подключения извне (PSQL). 
+
+```
+postgres=# alter system reset all;
+ALTER SYSTEM
+postgres=# alter system set listen_addresses = '*';
+ALTER SYSTEM
+```
+
+Перезапуск кластера  
+
+```
+sudo pg_ctlcluster 18 main restart
+```
+
+
+Подготавливаем базу testdb для запуска тестов (10 таблиц по 100000 записей):  
+```
+sysbench --db-driver=pgsql --pgsql-db=testdb --pgsql-user=postgres --pgsql-password=xxxxxxx --tables=10 --table-size=100000 oltp_read_write prepare
+
+sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
+
+Creating table 'sbtest1'...
+Inserting 100000 records into 'sbtest1'
+Creating a secondary index on 'sbtest1'...
+Creating table 'sbtest2'...
+Inserting 100000 records into 'sbtest2'
+Creating a secondary index on 'sbtest2'...
+Creating table 'sbtest3'...
+Inserting 100000 records into 'sbtest3'
+Creating a secondary index on 'sbtest3'...
+Creating table 'sbtest4'...
+Inserting 100000 records into 'sbtest4'
+Creating a secondary index on 'sbtest4'...
+Creating table 'sbtest5'...
+Inserting 100000 records into 'sbtest5'
+Creating a secondary index on 'sbtest5'...
+Creating table 'sbtest6'...
+Inserting 100000 records into 'sbtest6'
+Creating a secondary index on 'sbtest6'...
+Creating table 'sbtest7'...
+Inserting 100000 records into 'sbtest7'
+Creating a secondary index on 'sbtest7'...
+Creating table 'sbtest8'...
+Inserting 100000 records into 'sbtest8'
+Creating a secondary index on 'sbtest8'...
+Creating table 'sbtest9'...
+Inserting 100000 records into 'sbtest9'
+Creating a secondary index on 'sbtest9'...
+Creating table 'sbtest10'...
+Inserting 100000 records into 'sbtest10'
+Creating a secondary index on 'sbtest10'...
+```
+
+
+## Тестирование с параметрами по умолчанию
+
+Запросы обрабатываются в 2 потока, 60 секунд, выдача статуса каждые 10 секунд:
+
+```
+sudo sysbench --db-driver=pgsql --pgsql-db=testdb --pgsql-user=postgres --pgsql-password=xxxxxxx --threads=2 --time=60 --report-interval=10 oltp_read_write run
+
+sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
+
+Running the test with following options:
+Number of threads: 2
+Report intermediate results every 10 second(s)
+Initializing random number generator from current time
+
+
+Initializing worker threads...
+
+Threads started!
+
+[ 10s ] thds: 2 tps: 288.95 qps: 5802.69 (r/w/o: 4063.56/1157.02/582.11) lat (ms,95%): 14.46 err/s: 1.10 reconn/s: 0.00
+[ 20s ] thds: 2 tps: 236.70 qps: 4752.03 (r/w/o: 3327.85/946.59/477.59) lat (ms,95%): 20.00 err/s: 1.10 reconn/s: 0.00
+[ 30s ] thds: 2 tps: 293.70 qps: 5891.24 (r/w/o: 4125.46/1174.89/590.89) lat (ms,95%): 12.52 err/s: 0.90 reconn/s: 0.00
+[ 40s ] thds: 2 tps: 308.11 qps: 6171.57 (r/w/o: 4320.92/1231.43/619.22) lat (ms,95%): 10.84 err/s: 0.60 reconn/s: 0.00
+[ 50s ] thds: 2 tps: 250.50 qps: 5024.46 (r/w/o: 3518.07/1002.79/503.60) lat (ms,95%): 13.95 err/s: 0.80 reconn/s: 0.00
+[ 60s ] thds: 2 tps: 290.40 qps: 5822.47 (r/w/o: 4076.88/1161.79/583.80) lat (ms,95%): 12.52 err/s: 0.80 reconn/s: 0.00
+SQL statistics:
+    queries performed:
+        read:                            234346
+        write:                           66751
+        other:                           33575
+        total:                           334672
+    transactions:                        16686  (278.07 per sec.)
+    queries:                             334672 (5577.19 per sec.)
+    ignored errors:                      53     (0.88 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+
+General statistics:
+    total time:                          60.0057s
+    total number of events:              16686
+
+Latency (ms):
+         min:                                    2.53
+         avg:                                    7.19
+         max:                                 1013.23
+         95th percentile:                       14.21
+         sum:                               119958.79
+
+Threads fairness:
+    events (avg/stddev):           8343.0000/9.00
+    execution time (avg/stddev):   59.9794/0.00
+```
+
+Результат: 278 tps
+
+
+## Тестирование с параметрами, показавшими прирост быстродействия в предыдущих тестах
+
+Применение параметров, показавших прирост быстродействия (PSQL): 
+```
+postgres=# alter system set fsync = 'off';  -- Отключение принудительного сброса данных кэша ОС на диск
+ALTER SYSTEM
+postgres=# alter system set shared_buffers = '1638MB';  -- Увеличение объёма памяти для разделяемого буфера данных
+ALTER SYSTEM
+```
+
+Перезапуск кластера  
+
+```
+sudo pg_ctlcluster 18 main restart
+```
+
+Тестирование:
+
+```
+sudo sysbench --db-driver=pgsql --pgsql-db=testdb --pgsql-user=postgres --pgsql-password=xxxxxxx --threads=2 --time=60 --report-interval=10 oltp_read_write run
+
+sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
+
+Running the test with following options:
+Number of threads: 2
+Report intermediate results every 10 second(s)
+Initializing random number generator from current time
+
+
+Initializing worker threads...
+
+Threads started!
+
+[ 10s ] thds: 2 tps: 672.47 qps: 13071.75 (r/w/o: 9151.94/2610.87/1308.93) lat (ms,95%): 3.96 err/s: 1.20 reconn/s: 0.00
+[ 20s ] thds: 2 tps: 667.01 qps: 13370.37 (r/w/o: 9361.92/2669.13/1339.32) lat (ms,95%): 3.82 err/s: 1.60 reconn/s: 0.00
+[ 30s ] thds: 2 tps: 699.50 qps: 14018.46 (r/w/o: 9815.04/2799.31/1404.11) lat (ms,95%): 3.07 err/s: 1.60 reconn/s: 0.00
+[ 40s ] thds: 2 tps: 676.80 qps: 13566.82 (r/w/o: 9498.81/2709.70/1358.30) lat (ms,95%): 3.36 err/s: 1.70 reconn/s: 0.00
+[ 50s ] thds: 2 tps: 653.29 qps: 12967.01 (r/w/o: 9078.80/2590.04/1298.17) lat (ms,95%): 3.96 err/s: 1.10 reconn/s: 0.00
+[ 60s ] thds: 2 tps: 655.11 qps: 13123.85 (r/w/o: 9188.38/2622.15/1313.33) lat (ms,95%): 3.82 err/s: 1.20 reconn/s: 0.00
+SQL statistics:
+    queries performed:
+        read:                            560966
+        write:                           160020
+        other:                           80226
+        total:                           801212
+    transactions:                        40193  (670.37 per sec.)
+    queries:                             801212 (13352.50 per sec.)
+    ignored errors:                      84     (1.40 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+
+General statistics:
+    total time:                          60.0031s
+    total number of events:              40193
+
+Latency (ms):
+         min:                                    1.79
+         avg:                                    3.00
+         max:                                   18.23
+         95th percentile:                        3.75
+         sum:                               119914.72
+
+Threads fairness:
+    events (avg/stddev):           19992.5000/21.50
+    execution time (avg/stddev):   59.9574/0.00
+```
+
+
+Результат: 670 tps, что более чем в 2 раза быстрее теста с параметрами по умолчанию (278 tps).
