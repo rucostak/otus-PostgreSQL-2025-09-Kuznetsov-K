@@ -1051,7 +1051,7 @@ Creating a secondary index on 'sbtest10'...
 Запросы обрабатываются в 2 потока, 60 секунд, выдача статуса каждые 10 секунд:
 
 ```
-sudo sysbench --db-driver=pgsql --pgsql-db=testdb --pgsql-user=postgres --pgsql-password=xxxxxxx --threads=2 --time=60 --report-interval=10 oltp_read_write run
+sysbench --db-driver=pgsql --pgsql-db=testdb --pgsql-user=postgres --pgsql-password=xxxxxxx --threads=2 --time=60 --report-interval=10 oltp_read_write run
 
 sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
 
@@ -1120,7 +1120,7 @@ sudo pg_ctlcluster 18 main restart
 Тестирование:
 
 ```
-sudo sysbench --db-driver=pgsql --pgsql-db=testdb --pgsql-user=postgres --pgsql-password=xxxxxxx --threads=2 --time=60 --report-interval=10 oltp_read_write run
+sysbench --db-driver=pgsql --pgsql-db=testdb --pgsql-user=postgres --pgsql-password=xxxxxxx --threads=2 --time=60 --report-interval=10 oltp_read_write run
 
 sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
 
