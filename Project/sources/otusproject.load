@@ -1,0 +1,156 @@
+load database
+	from mssql://******:********@192.168.10.139:53969/OtusProject
+	into pgsql://********:*******@192.168.10.158/otusproject
+
+-- исключить таблицы по имени
+excluding table names like 'sys%' in schema 'dbo'
+
+-- отобрать таблицы по имени
+including only table names like '%' in schema 'dbo'
+
+-- создавать таблицы в схеме с новым именем
+alter schema 'dbo' rename to 'dbo2'
+
+set mssql parameters textsize to '104857600'
+
+-- задать опции
+with create schemas, include drop, truncate, disable triggers, create tables, create indexes, drop indexes, reset sequences, prefetch rows = 1000
+ 
+-- настроить параметры работы по нагрузке при переносе данных
+set work_mem to '16MB', maintenance_work_mem to '512MB', timezone to 'UTC', client_encoding to 'UTF-8'
+
+-- client_encoding может не срабатывать из скрипта, тогда можно создать файл ~/.freetds.conf
+/*
+[global]
+    tds version = 7.4
+    client charset = UTF-8
+*/
+
+-- задать правила преобразования типов
+cast type bigint to bigint, type geometry to bytea, type geography to bytea, type smallmoney to money, type tinyint to smallint, type smallint to smallint, type date to date
+ 
+-- если схема dbo существует, то удалить ее
+before load do $$ drop schema if exists dbo2 cascade; $$, $$
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+$$
+
+-- создать дополнительные объекты схемы после импорта
+after load do $$ CREATE OR REPLACE VIEW dbo2.leaseact_view
+AS SELECT t.id,
+    d.doctypeid,
+    d.stateid,
+    d.origin,
+    e.ordinal AS stateordinal,
+    d.modified,
+    d.modifiedby,
+    t.number,
+    t.date,
+    t.ownerid,
+    t.tenantryid,
+    t.cargoid,
+    t.byownerchange,
+    t.leasecontractid
+   FROM dbo2.leaseact t
+     JOIN dbo2.document d ON d.id = t.id
+     JOIN dbo2.enum e ON d.stateid = e.id AND e.ordinal < 4
+  WHERE NOT (t.id IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2));
+$$,
+$$ CREATE OR REPLACE VIEW dbo2.leaseactvehicle_view
+AS SELECT id,
+    leaseactid,
+    ordinal,
+    number
+   FROM dbo2.leaseactvehicle
+  WHERE NOT (id IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2)) AND NOT (leaseactid IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2)); 
+$$,
+$$ CREATE OR REPLACE VIEW dbo2.technicalact_view
+AS SELECT t.id,
+    d.doctypeid,
+    d.stateid,
+    d.origin,
+    e.ordinal AS stateordinal,
+    d.modified,
+    d.modifiedby,
+    t.number,
+    t.date,
+    t.ownerid,
+    t.tenantryid,
+    t.cargoid
+   FROM dbo2.technicalact t
+     JOIN dbo2.document d ON d.id = t.id
+     JOIN dbo2.enum e ON d.stateid = e.id AND e.ordinal < 4
+  WHERE NOT (t.id IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2));
+$$,
+$$ CREATE OR REPLACE VIEW dbo2.technicalactvehicle_view
+AS SELECT id,
+    technicalactid,
+    number,
+    originalcountryid,
+    vehiclemodelid,
+    capacity,
+    tareweight,
+    caliber,
+    nextmaintenancedate,
+    mileageflag,
+    ordinal,
+    nextownerrecertification,
+    builddate,
+    factoryoforiginid,
+    envelopemodernizationdate
+   FROM dbo2.technicalactvehicle
+  WHERE NOT (id IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2)) AND NOT (technicalactid IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2));
+$$,
+$$ CREATE OR REPLACE VIEW dbo2.technicaldata_view
+AS SELECT t.id,
+    d.doctypeid,
+    d.stateid,
+    d.origin,
+    e.ordinal AS stateordinal,
+    d.modified,
+    d.modifiedby,
+    t.sourceid,
+    t.date
+   FROM dbo2.technicaldata t
+     JOIN dbo2.document d ON d.id = t.id
+     JOIN dbo2.enum e ON d.stateid = e.id AND e.ordinal < 4
+  WHERE NOT (t.id IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2)); 
+$$,
+$$ CREATE OR REPLACE VIEW dbo2.technicaldatavehicle_view
+AS SELECT id,
+    technicaldataid,
+    number,
+    originalcountryid,
+    capacity,
+    tareweight,
+    caliber,
+    nextmaintenancedate,
+    mileageflag,
+    mileage,
+    nextownerrecertification,
+    ordinal,
+    maintenanceagreement,
+    vehiclemodelid,
+    nextcoatingdate,
+    envelopemodernizationdate
+   FROM dbo2.technicaldatavehicle
+  WHERE NOT (id IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2)) AND NOT (technicaldataid IN ( SELECT documenterrordatalog.recordid
+           FROM dbo2.documenterrordatalog
+          WHERE documenterrordatalog.level = 2)); 
+$$
+;

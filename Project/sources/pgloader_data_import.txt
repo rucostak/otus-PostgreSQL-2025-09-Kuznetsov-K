@@ -1,0 +1,54 @@
+rucostak@pg-otus-1:~$ pgloader /tmp/pgloader/otusproject.load
+2026-01-09T15:13:26.021000Z LOG pgloader version "3.6.10~devel"
+2026-01-09T15:13:26.026000Z LOG Data errors in '/tmp/pgloader/'
+2026-01-09T15:13:26.026000Z LOG Parsing commands from file #P"/tmp/pgloader/otusproject.load"
+2026-01-09T15:13:26.394988Z LOG Migrating from #<MSSQL-CONNECTION mssql://******@192.168.10.139:53969/OtusProject {1006BC0E93}>
+2026-01-09T15:13:26.394988Z LOG Migrating into #<PGSQL-CONNECTION pgsql://********@192.168.10.150:5432/otusproject {1006BC1023}>
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+Max connections reached, increase value of TDS_MAX_CONN
+2026-01-09T15:18:04.114552Z LOG report summary reset
+               table name     errors       rows      bytes      total time
+-------------------------  ---------  ---------  ---------  --------------
+              before load          0          2                     0.132s
+          fetch meta data          0         85                     0.428s
+           Create Schemas          0          0                     0.002s
+         Create SQL Types          0          0                     0.006s
+            Create tables          0         26                     0.064s
+           Set Table OIDs          0         13                     0.006s
+-------------------------  ---------  ---------  ---------  --------------
+   dbo2.cachetechinfohist          0          0                     0.151s
+dbo2.documenterrordatalog          0      24580     3.0 MB          1.567s
+            dbo2.document          0      78517    10.9 MB          5.470s
+        dbo2.documenttype          0          3     0.4 kB          0.600s
+            dbo2.leaseact          0       7224     1.3 MB          1.442s
+        dbo2.technicalact          0       6163     1.0 MB          1.075s
+       dbo2.technicaldata          0      65130     5.9 MB          3.093s
+   dbo2.documenterrortype          0         26     2.9 kB          0.391s
+                dbo2.enum          0         92     9.6 kB          0.965s
+     dbo2.leaseactvehicle          0     143032    11.8 MB          6.110s
+dbo2.technicaldatavehicle          0    7286807   992.7 MB       3m17.710s
+ dbo2.technicalactvehicle          0      80226    17.0 MB          6.944s
+ dbo2.technicaldatasource          0          6     0.4 kB          0.335s
+-------------------------  ---------  ---------  ---------  --------------
+  COPY Threads Completion          0          4                  3m24.658s
+           Create Indexes          0         60                  3m42.752s
+   Index Build Completion          0         60                   1m1.699s
+          Reset Sequences          0          0                     0.120s
+             Primary Keys          0         13                     0.018s
+      Create Foreign Keys          0         12                     8.299s
+          Create Triggers          0          0                     0.001s
+         Install Comments          0          0                     0.000s
+-------------------------  ---------  ---------  ---------  --------------
+        Total import time          ✓    7691806     1.0 GB       8m17.547s
