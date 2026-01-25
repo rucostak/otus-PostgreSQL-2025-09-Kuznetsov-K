@@ -3,7 +3,7 @@ rucostak@pg-otus-1:~$ pgloader /tmp/pgloader/otusproject.load
 2026-01-09T15:13:26.026000Z LOG Data errors in '/tmp/pgloader/'
 2026-01-09T15:13:26.026000Z LOG Parsing commands from file #P"/tmp/pgloader/otusproject.load"
 2026-01-09T15:13:26.394988Z LOG Migrating from #<MSSQL-CONNECTION mssql://******@192.168.10.139:53969/OtusProject {1006BC0E93}>
-2026-01-09T15:13:26.394988Z LOG Migrating into #<PGSQL-CONNECTION pgsql://********@192.168.10.150:5432/otusproject {1006BC1023}>
+2026-01-09T15:13:26.394988Z LOG Migrating into #<PGSQL-CONNECTION pgsql://********@192.168.10.158:5432/otusproject {1006BC1023}>
 Max connections reached, increase value of TDS_MAX_CONN
 Max connections reached, increase value of TDS_MAX_CONN
 Max connections reached, increase value of TDS_MAX_CONN
