@@ -1,0 +1,859 @@
+CREATE DATABASE [OtusProject_new]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'OtusProject_new', FILENAME = N'D:\SQL\MSSQL12.A\MSSQL\DATA\OtusProject_new.mdf' , SIZE = 131072KB, MAXSIZE = UNLIMITED, FILEGROWTH = 131072KB )
+ LOG ON 
+( NAME = N'OtusProject_new_log', FILENAME = N'E:\SQL\MSSQL12.A\MSSQL\Data\OtusProject_new_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 131072KB )
+ COLLATE Cyrillic_General_CI_AS
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT
+GO
+ALTER DATABASE [OtusProject_new] SET COMPATIBILITY_LEVEL = 150
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [OtusProject_new].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [OtusProject_new] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [OtusProject_new] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [OtusProject_new] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [OtusProject_new] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [OtusProject_new] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [OtusProject_new] SET  MULTI_USER 
+GO
+ALTER DATABASE [OtusProject_new] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [OtusProject_new] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [OtusProject_new] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [OtusProject_new] SET TARGET_RECOVERY_TIME = 0 SECONDS 
+GO
+ALTER DATABASE [OtusProject_new] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [OtusProject_new] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'OtusProject_new', N'ON'
+GO
+ALTER DATABASE [OtusProject_new] SET QUERY_STORE = OFF
+GO
+CREATE USER [tester] FOR LOGIN [tester] WITH DEFAULT_SCHEMA=[dbo]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [tester]
+GO
+GRANT VIEW ANY COLUMN ENCRYPTION KEY DEFINITION TO [public] AS [dbo]
+GO
+GRANT VIEW ANY COLUMN MASTER KEY DEFINITION TO [public] AS [dbo]
+GO
+GRANT CONNECT TO [tester] AS [dbo]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Document](
+	[ID] [uniqueidentifier] NOT NULL,
+	[DocTypeID] [uniqueidentifier] NOT NULL,
+	[StateID] [uniqueidentifier] NULL,
+	[Origin] [nvarchar](3) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	[Modified] [datetimeoffset](0) NOT NULL,
+	[ModifiedBy] [nvarchar](128) COLLATE Cyrillic_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_Document] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TechnicalAct](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[Number] [nvarchar](64) COLLATE Cyrillic_General_CI_AS NULL,
+	[Date] [datetimeoffset](0) NOT NULL,
+	[OwnerID] [uniqueidentifier] NOT NULL,
+	[TenantryID] [uniqueidentifier] NOT NULL,
+	[CargoID] [uniqueidentifier] NOT NULL,
+ CONSTRAINT [PK_TechnicalAct] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Enum](
+	[ID] [uniqueidentifier] NOT NULL,
+	[ParentID] [uniqueidentifier] NULL,
+	[Ordinal] [int] NULL,
+	[NameRus] [nvarchar](255) COLLATE Cyrillic_General_CI_AS NULL,
+	[NameEng] [nvarchar](255) COLLATE Cyrillic_General_CI_AS NULL,
+ CONSTRAINT [PK_Enum] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_Enum_ParentID_Ordinal] UNIQUE NONCLUSTERED 
+(
+	[ParentID] ASC,
+	[Ordinal] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DocumentErrorDataLog](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[DocumentID] [uniqueidentifier] NOT NULL,
+	[RecordID] [uniqueidentifier] NOT NULL,
+	[Attribute] [nvarchar](128) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	[Level] [int] NOT NULL,
+	[Message] [nvarchar](2044) COLLATE Cyrillic_General_CI_AS NULL,
+	[ErrorCode] [smallint] NOT NULL,
+ CONSTRAINT [PK_DocumentErrorDataLog] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[TechnicalAct_View] AS
+SELECT 
+	t.[ID],
+	d.[DocTypeID],
+	d.[StateID],
+	d.[Origin],
+	e.[Ordinal] as [StateOrdinal],
+	d.[Modified],
+	d.[ModifiedBy],
+	t.[Number],
+	t.[Date],
+	t.[OwnerID],
+	t.[TenantryID],
+	t.[CargoID]
+FROM [dbo].[TechnicalAct] t
+	INNER JOIN [dbo].[Document] d ON d.[ID] = t.[ID]
+	INNER JOIN [dbo].[Enum] e ON d.[StateID] = e.[ID] AND e.[Ordinal] < 4
+WHERE t.[ID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TechnicalActVehicle](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[TechnicalActID] [uniqueidentifier] NOT NULL,
+	[Number] [nvarchar](8) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	[OriginalCountryID] [uniqueidentifier] NULL,
+	[VehicleModelID] [uniqueidentifier] NOT NULL,
+	[Capacity] [int] NULL,
+	[TareWeight] [int] NULL,
+	[Caliber] [int] NULL,
+	[NextMaintenanceDate] [datetimeoffset](0) NULL,
+	[MileageFlag] [bit] NOT NULL,
+	[Ordinal] [int] NOT NULL,
+	[NextOwnerRecertification] [datetimeoffset](0) NULL,
+	[BuildDate] [datetimeoffset](0) NULL,
+	[FactoryOfOriginID] [uniqueidentifier] NULL,
+	[EnvelopeModernizationDate] [datetimeoffset](0) NULL,
+ CONSTRAINT [PK_TechnicalActVehicle] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[TechnicalActVehicle_View] AS
+SELECT 
+	[ID],
+	[TechnicalActID],
+	[Number],
+	[OriginalCountryID],
+	[VehicleModelID],
+	[Capacity],
+	[TareWeight],
+	[Caliber],
+	[NextMaintenanceDate],
+	[MileageFlag],
+	[Ordinal],
+	[NextOwnerRecertification],
+	[BuildDate],
+	[FactoryOfOriginID],
+	[EnvelopeModernizationDate]
+FROM [dbo].[TechnicalActVehicle]
+WHERE [ID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+	AND [TechnicalActID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TechnicalData](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[SourceID] [uniqueidentifier] NOT NULL,
+	[Date] [datetimeoffset](0) NOT NULL,
+ CONSTRAINT [PK_TechnicalData] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[TechnicalData_View] AS
+SELECT 
+	t.[ID],
+	d.[DocTypeID],
+	d.[StateID],
+	d.[Origin],
+	e.[Ordinal] as [StateOrdinal],
+	d.[Modified],
+	d.[ModifiedBy],
+	t.[SourceID],
+	t.[Date]
+FROM [dbo].[TechnicalData] t
+	INNER JOIN [dbo].[Document] d ON d.[ID] = t.[ID]
+	INNER JOIN [dbo].[Enum] e ON d.[StateID] = e.[ID] AND e.[Ordinal] < 4
+WHERE t.[ID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TechnicalDataVehicle](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[TechnicalDataID] [uniqueidentifier] NOT NULL,
+	[Number] [nvarchar](8) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	[OriginalCountryID] [uniqueidentifier] NULL,
+	[Capacity] [int] NULL,
+	[TareWeight] [int] NULL,
+	[Caliber] [int] NULL,
+	[NextMaintenanceDate] [datetimeoffset](0) NULL,
+	[MileageFlag] [bit] NULL,
+	[Mileage] [int] NULL,
+	[NextOwnerRecertification] [datetimeoffset](0) NULL,
+	[Ordinal] [int] NOT NULL,
+	[MaintenanceAgreement] [nvarchar](255) COLLATE Cyrillic_General_CI_AS NULL,
+	[VehicleModelID] [uniqueidentifier] NULL,
+	[NextCoatingDate] [datetimeoffset](0) NULL,
+	[EnvelopeModernizationDate] [datetimeoffset](0) NULL,
+ CONSTRAINT [PK_TechnicalDataVehicle] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[TechnicalDataVehicle_View] AS
+SELECT 
+	[ID],
+	[TechnicalDataID],
+	[Number],
+	[OriginalCountryID],
+	[Capacity],
+	[TareWeight],
+	[Caliber],
+	[NextMaintenanceDate],
+	[MileageFlag],
+	[Mileage],
+	[NextOwnerRecertification],
+	[Ordinal],
+	[MaintenanceAgreement],
+	[VehicleModelID],
+	[NextCoatingDate],
+	[EnvelopeModernizationDate]
+FROM [dbo].[TechnicalDataVehicle]
+WHERE [ID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+	AND [TechnicalDataID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[LeaseAct](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[Number] [nvarchar](64) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	[Date] [datetimeoffset](0) NOT NULL,
+	[OwnerID] [uniqueidentifier] NOT NULL,
+	[TenantryID] [uniqueidentifier] NOT NULL,
+	[CargoID] [uniqueidentifier] NOT NULL,
+	[ByOwnerChange] [bit] NULL,
+	[LeaseContractID] [uniqueidentifier] NULL,
+ CONSTRAINT [PK_LeaseAct] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[LeaseAct_View] AS
+SELECT 
+	t.[ID],
+	d.[DocTypeID],
+	d.[StateID],
+	d.[Origin],
+	e.[Ordinal] as [StateOrdinal],
+	d.[Modified],
+	d.[ModifiedBy],
+	t.[Number],
+	t.[Date],
+	t.[OwnerID],
+	t.[TenantryID],
+	t.[CargoID],
+	t.[ByOwnerChange],
+	t.[LeaseContractID]
+FROM [dbo].[LeaseAct] t
+	INNER JOIN [dbo].[Document] d ON d.[ID] = t.[ID]
+	INNER JOIN [dbo].[Enum] e ON d.[StateID] = e.[ID] AND e.[Ordinal] < 4
+WHERE t.[ID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[LeaseActVehicle](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[LeaseActID] [uniqueidentifier] NOT NULL,
+	[Ordinal] [int] NOT NULL,
+	[Number] [nvarchar](8) COLLATE Cyrillic_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_LeaseActVehicle] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[LeaseActVehicle_View] AS
+SELECT 
+	[ID],
+	[LeaseActID],
+	[Ordinal],
+	[Number]
+FROM [dbo].[LeaseActVehicle]
+WHERE [ID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+	AND [LeaseActID] NOT IN (SELECT [RecordID] FROM [dbo].[DocumentErrorDataLog] WHERE [Level] = 2)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[cachetechinfohist](
+	[ID] [uniqueidentifier] NOT NULL,
+	[OwnerID] [uniqueidentifier] NOT NULL,
+	[TenantryID] [uniqueidentifier] NULL,
+	[CargoID] [uniqueidentifier] NULL,
+	[TechnicalDataSourceID] [uniqueidentifier] NULL,
+	[VehicleID] [uniqueidentifier] NOT NULL,
+	[VehicleNumber] [nvarchar](8) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	[DocumentNumber] [nvarchar](64) COLLATE Cyrillic_General_CI_AS NULL,
+	[OriginalCountryID] [uniqueidentifier] NULL,
+	[VehicleModelID] [uniqueidentifier] NULL,
+	[Capacity] [int] NULL,
+	[TareWeight] [int] NULL,
+	[Caliber] [int] NULL,
+	[NextMaintenanceDate] [datetimeoffset](0) NULL,
+	[MileageFlag] [bit] NULL,
+	[Mileage] [int] NULL,
+	[NextOwnerRecertification] [datetimeoffset](0) NULL,
+	[BuildDate] [datetimeoffset](0) NULL,
+	[FactoryOfOriginID] [uniqueidentifier] NULL,
+	[MaintenanceAgreement] [nvarchar](255) COLLATE Cyrillic_General_CI_AS NULL,
+	[DateFrom] [datetimeoffset](0) NOT NULL,
+	[DateTill] [datetimeoffset](0) NOT NULL,
+	[DocTypeID] [uniqueidentifier] NOT NULL,
+	[TechnicalActID] [uniqueidentifier] NULL,
+	[TechnicalActVehicleID] [uniqueidentifier] NULL,
+	[FieldsUpdatedDocumentVehicleID] [nvarchar](max) COLLATE Cyrillic_General_CI_AS NULL,
+	[OrdinalFrom] [int] NOT NULL,
+	[NextCoatingDate] [datetimeoffset](0) NULL,
+	[EnvelopeModernizationDate] [datetimeoffset](0) NULL,
+ CONSTRAINT [PK_cachetechinfohist] PRIMARY KEY CLUSTERED 
+(
+	[VehicleNumber] ASC,
+	[OrdinalFrom] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DocumentErrorType](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[ErrorCode] [smallint] NOT NULL,
+	[Description] [nvarchar](1000) COLLATE Cyrillic_General_CI_AS NULL,
+	[Level] [tinyint] NOT NULL,
+	[DateFrom] [smalldatetime] NOT NULL,
+	[DateTill] [smalldatetime] NULL,
+	[DocumentTypeOrder]  AS (CONVERT([smallint],[ErrorCode]/(100))) PERSISTED,
+ CONSTRAINT [PK_DocumentErrorType] PRIMARY KEY CLUSTERED 
+(
+	[ErrorCode] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_DocumentErrorType] UNIQUE NONCLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DocumentType](
+	[ID] [uniqueidentifier] NOT NULL,
+	[Order] [smallint] NULL,
+	[NameRus] [nvarchar](127) COLLATE Cyrillic_General_CI_AS NULL,
+	[NameEng] [nvarchar](127) COLLATE Cyrillic_General_CI_AS NULL,
+	[NameClass] [nvarchar](48) COLLATE Cyrillic_General_CI_AS NULL,
+	[TableName] [nvarchar](128) COLLATE Cyrillic_General_CI_AS NULL,
+	[ChildTableName] [nvarchar](128) COLLATE Cyrillic_General_CI_AS NULL,
+ CONSTRAINT [PK_DocumentType] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_DocumentType_Order] UNIQUE NONCLUSTERED 
+(
+	[Order] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TechnicalDataSource](
+	[ID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[NameEng] [nvarchar](128) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	[NameRus] [nvarchar](128) COLLATE Cyrillic_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_TechnicalDataSource] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_cachetechinfohist_VehicleID] ON [dbo].[cachetechinfohist]
+(
+	[VehicleID] ASC
+)
+INCLUDE([DateFrom]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_cachetechinfohist_VehicleNumber_DateFrom_DateTill] ON [dbo].[cachetechinfohist]
+(
+	[VehicleNumber] ASC,
+	[DateFrom] ASC,
+	[DateTill] ASC
+)
+INCLUDE([OwnerID],[VehicleModelID]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Document_DocTypeID] ON [dbo].[Document]
+(
+	[DocTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Document_Modified] ON [dbo].[Document]
+(
+	[Modified] ASC
+)
+INCLUDE([ModifiedBy]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Document_StateID] ON [dbo].[Document]
+(
+	[StateID] ASC
+)
+INCLUDE([Origin]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentErrorDataLog_Attribute] ON [dbo].[DocumentErrorDataLog]
+(
+	[Attribute] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentErrorDataLog_DocumentID] ON [dbo].[DocumentErrorDataLog]
+(
+	[DocumentID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentErrorDataLog_ErrorCode] ON [dbo].[DocumentErrorDataLog]
+(
+	[ErrorCode] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentErrorDataLog_Level] ON [dbo].[DocumentErrorDataLog]
+(
+	[Level] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentErrorDataLog_Level_RecordID] ON [dbo].[DocumentErrorDataLog]
+(
+	[Level] ASC
+)
+INCLUDE([RecordID]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentErrorDataLog_Level_RecordID_Critical] ON [dbo].[DocumentErrorDataLog]
+(
+	[Level] ASC,
+	[RecordID] ASC
+)
+WHERE ([Level]=(2))
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentErrorDataLog_RecordID] ON [dbo].[DocumentErrorDataLog]
+(
+	[RecordID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ARITHABORT ON
+SET CONCAT_NULL_YIELDS_NULL ON
+SET QUOTED_IDENTIFIER ON
+SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET ANSI_WARNINGS ON
+SET NUMERIC_ROUNDABORT OFF
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentErrorType_DocumentTypeOrder] ON [dbo].[DocumentErrorType]
+(
+	[DocumentTypeOrder] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentType_ChildTableName] ON [dbo].[DocumentType]
+(
+	[ChildTableName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentType_NameClass] ON [dbo].[DocumentType]
+(
+	[NameClass] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_DocumentType_TableName] ON [dbo].[DocumentType]
+(
+	[TableName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Enum_Ordinal] ON [dbo].[Enum]
+(
+	[Ordinal] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Enum_ParentID] ON [dbo].[Enum]
+(
+	[ParentID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseAct_ByOwnerChange] ON [dbo].[LeaseAct]
+(
+	[ByOwnerChange] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseAct_CargoID] ON [dbo].[LeaseAct]
+(
+	[CargoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseAct_Date] ON [dbo].[LeaseAct]
+(
+	[Date] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseAct_LeaseContractID] ON [dbo].[LeaseAct]
+(
+	[LeaseContractID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseAct_Number] ON [dbo].[LeaseAct]
+(
+	[Number] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseAct_OwnerID] ON [dbo].[LeaseAct]
+(
+	[OwnerID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseAct_TenantryID] ON [dbo].[LeaseAct]
+(
+	[TenantryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseActVehicle_LeaseActID] ON [dbo].[LeaseActVehicle]
+(
+	[LeaseActID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_LeaseActVehicle_Number] ON [dbo].[LeaseActVehicle]
+(
+	[Number] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalAct_CargoID] ON [dbo].[TechnicalAct]
+(
+	[CargoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalAct_Date] ON [dbo].[TechnicalAct]
+(
+	[Date] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalAct_OwnerID] ON [dbo].[TechnicalAct]
+(
+	[OwnerID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalAct_TenantryID] ON [dbo].[TechnicalAct]
+(
+	[TenantryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalActVehicle_BuildDate] ON [dbo].[TechnicalActVehicle]
+(
+	[BuildDate] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalActVehicle_FactoryOfOriginID] ON [dbo].[TechnicalActVehicle]
+(
+	[FactoryOfOriginID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalActVehicle_Number] ON [dbo].[TechnicalActVehicle]
+(
+	[Number] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalActVehicle_OriginalCountryID] ON [dbo].[TechnicalActVehicle]
+(
+	[OriginalCountryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalActVehicle_TechnicalActID] ON [dbo].[TechnicalActVehicle]
+(
+	[TechnicalActID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalActVehicle_VehicleModelID] ON [dbo].[TechnicalActVehicle]
+(
+	[VehicleModelID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalData_Date] ON [dbo].[TechnicalData]
+(
+	[Date] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalData_SourceID] ON [dbo].[TechnicalData]
+(
+	[SourceID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_TechnicalDataSource_NameEng_NameRus] ON [dbo].[TechnicalDataSource]
+(
+	[NameEng] ASC,
+	[NameRus] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalDataVehicle_Number] ON [dbo].[TechnicalDataVehicle]
+(
+	[Number] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalDataVehicle_OriginalCountryID] ON [dbo].[TechnicalDataVehicle]
+(
+	[OriginalCountryID] ASC
+)
+WHERE ([OriginalCountryID] IS NOT NULL)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalDataVehicle_TechnicalDataID] ON [dbo].[TechnicalDataVehicle]
+(
+	[TechnicalDataID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_TechnicalDataVehicle_VehicleModelID] ON [dbo].[TechnicalDataVehicle]
+(
+	[VehicleModelID] ASC
+)
+WHERE ([VehicleModelID] IS NOT NULL)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Document] ADD  CONSTRAINT [DF_Document_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[Document] ADD  CONSTRAINT [DF_Document_Modified]  DEFAULT (sysdatetimeoffset()) FOR [Modified]
+GO
+ALTER TABLE [dbo].[Document] ADD  CONSTRAINT [DF_Document_ModifiedBy]  DEFAULT (suser_sname()) FOR [ModifiedBy]
+GO
+ALTER TABLE [dbo].[DocumentErrorDataLog] ADD  CONSTRAINT [DF_DocumentErrorDataLog_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[DocumentErrorType] ADD  CONSTRAINT [DF_DocumentErrorType_ID]  DEFAULT (newsequentialid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[DocumentType] ADD  CONSTRAINT [DF_DocumentType_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[Enum] ADD  CONSTRAINT [DF_Enum_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[LeaseAct] ADD  CONSTRAINT [DF_LeaseAct_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[LeaseActVehicle] ADD  CONSTRAINT [DF_LeaseActVehicle_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[TechnicalAct] ADD  CONSTRAINT [DF_TechnicalAct_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[TechnicalActVehicle] ADD  CONSTRAINT [DF_TechnicalActVehicle_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[TechnicalActVehicle] ADD  CONSTRAINT [DF_TechnicalActVehicle_MileageFlag]  DEFAULT ((0)) FOR [MileageFlag]
+GO
+ALTER TABLE [dbo].[TechnicalData] ADD  CONSTRAINT [DF_TechnicalData_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[TechnicalDataSource] ADD  CONSTRAINT [DF_TechnicalDataSource_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[TechnicalDataVehicle] ADD  CONSTRAINT [DF_TechnicalDataVehicle_ID]  DEFAULT (newid()) FOR [ID]
+GO
+ALTER TABLE [dbo].[Document]  WITH CHECK ADD  CONSTRAINT [FK_Document_DocumentType] FOREIGN KEY([DocTypeID])
+REFERENCES [dbo].[DocumentType] ([ID])
+GO
+ALTER TABLE [dbo].[Document] CHECK CONSTRAINT [FK_Document_DocumentType]
+GO
+ALTER TABLE [dbo].[Document]  WITH CHECK ADD  CONSTRAINT [FK_Document_Enum] FOREIGN KEY([StateID])
+REFERENCES [dbo].[Enum] ([ID])
+GO
+ALTER TABLE [dbo].[Document] CHECK CONSTRAINT [FK_Document_Enum]
+GO
+ALTER TABLE [dbo].[DocumentErrorDataLog]  WITH CHECK ADD  CONSTRAINT [FK_DocumentErrorDataLog_DocumentErrorType] FOREIGN KEY([ErrorCode])
+REFERENCES [dbo].[DocumentErrorType] ([ErrorCode])
+GO
+ALTER TABLE [dbo].[DocumentErrorDataLog] CHECK CONSTRAINT [FK_DocumentErrorDataLog_DocumentErrorType]
+GO
+ALTER TABLE [dbo].[DocumentErrorType]  WITH CHECK ADD  CONSTRAINT [FK_DocumentErrorType_DocumentType] FOREIGN KEY([DocumentTypeOrder])
+REFERENCES [dbo].[DocumentType] ([Order])
+GO
+ALTER TABLE [dbo].[DocumentErrorType] CHECK CONSTRAINT [FK_DocumentErrorType_DocumentType]
+GO
+ALTER TABLE [dbo].[Enum]  WITH CHECK ADD  CONSTRAINT [FK_Enum_Enum_ParentID_ID] FOREIGN KEY([ParentID])
+REFERENCES [dbo].[Enum] ([ID])
+GO
+ALTER TABLE [dbo].[Enum] CHECK CONSTRAINT [FK_Enum_Enum_ParentID_ID]
+GO
+ALTER TABLE [dbo].[LeaseAct]  WITH CHECK ADD  CONSTRAINT [FK_LeaseAct_Document] FOREIGN KEY([ID])
+REFERENCES [dbo].[Document] ([ID])
+GO
+ALTER TABLE [dbo].[LeaseAct] CHECK CONSTRAINT [FK_LeaseAct_Document]
+GO
+ALTER TABLE [dbo].[LeaseActVehicle]  WITH CHECK ADD  CONSTRAINT [FK_LeaseActVehicle_LeaseAct] FOREIGN KEY([LeaseActID])
+REFERENCES [dbo].[LeaseAct] ([ID])
+GO
+ALTER TABLE [dbo].[LeaseActVehicle] CHECK CONSTRAINT [FK_LeaseActVehicle_LeaseAct]
+GO
+ALTER TABLE [dbo].[TechnicalAct]  WITH CHECK ADD  CONSTRAINT [FK_TechnicalAct_Document] FOREIGN KEY([ID])
+REFERENCES [dbo].[Document] ([ID])
+GO
+ALTER TABLE [dbo].[TechnicalAct] CHECK CONSTRAINT [FK_TechnicalAct_Document]
+GO
+ALTER TABLE [dbo].[TechnicalActVehicle]  WITH CHECK ADD  CONSTRAINT [FK_TechnicalActVehicle_TechnicalAct] FOREIGN KEY([TechnicalActID])
+REFERENCES [dbo].[TechnicalAct] ([ID])
+GO
+ALTER TABLE [dbo].[TechnicalActVehicle] CHECK CONSTRAINT [FK_TechnicalActVehicle_TechnicalAct]
+GO
+ALTER TABLE [dbo].[TechnicalData]  WITH CHECK ADD  CONSTRAINT [FK_TechnicalData_Document] FOREIGN KEY([ID])
+REFERENCES [dbo].[Document] ([ID])
+GO
+ALTER TABLE [dbo].[TechnicalData] CHECK CONSTRAINT [FK_TechnicalData_Document]
+GO
+ALTER TABLE [dbo].[TechnicalData]  WITH CHECK ADD  CONSTRAINT [FK_TechnicalData_TechnicalDataSource] FOREIGN KEY([SourceID])
+REFERENCES [dbo].[TechnicalDataSource] ([ID])
+GO
+ALTER TABLE [dbo].[TechnicalData] CHECK CONSTRAINT [FK_TechnicalData_TechnicalDataSource]
+GO
+ALTER TABLE [dbo].[TechnicalDataVehicle]  WITH CHECK ADD  CONSTRAINT [FK_TechnicalDataVehicle_TechnicalData] FOREIGN KEY([TechnicalDataID])
+REFERENCES [dbo].[TechnicalData] ([ID])
+GO
+ALTER TABLE [dbo].[TechnicalDataVehicle] CHECK CONSTRAINT [FK_TechnicalDataVehicle_TechnicalData]
+GO
+ALTER TABLE [dbo].[DocumentErrorDataLog]  WITH CHECK ADD  CONSTRAINT [CK_DocumentErrorDataLog_Level] CHECK  (([Level]>=(1) AND [Level]<=(2)))
+GO
+ALTER TABLE [dbo].[DocumentErrorDataLog] CHECK CONSTRAINT [CK_DocumentErrorDataLog_Level]
+GO
+ALTER TABLE [dbo].[TechnicalDataVehicle]  WITH CHECK ADD  CONSTRAINT [CK_TechnicalDataVehicle_MileageFlag_Mileage] CHECK  (([MileageFlag]=(1) AND [Mileage] IS NOT NULL OR [MileageFlag] IS NULL AND [Mileage] IS NULL OR [MileageFlag]=(0) AND [Mileage] IS NULL))
+GO
+ALTER TABLE [dbo].[TechnicalDataVehicle] CHECK CONSTRAINT [CK_TechnicalDataVehicle_MileageFlag_Mileage]
+GO
+ALTER DATABASE [OtusProject_new] SET  READ_WRITE 
+GO
